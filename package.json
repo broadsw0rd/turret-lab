@@ -1,0 +1,42 @@
+{
+  "name": "turret-lab",
+  "version": "0.1.0",
+  "description": "Turret Laboratory",
+  "keywords": [
+    "game",
+    "turret",
+    "td"
+  ],
+  "license": "MIT",
+  "homepage": "https://broadsw0rd.github.io/turret-lab",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/broadsw0rd/turret-lab"
+  },
+  "bugs": {
+    "url": "https://github.com/broadsw0rd/turret-lab/issues",
+    "email": "broadsw.rd@yandex.ru"
+  },
+  "author": {
+    "name": "Vladimir Bykov",
+    "email": "broadsw.rd@yandex.ru",
+    "url": "https://github.com/broadsw0rd"
+  },
+  "scripts": {
+    "check": "standard src/**/*.js | snazzy",
+    "build": "npm run build:lib && npm run build:app",
+    "build:app": "rollup -c rollup.app.js",
+    "build:lib": "rollup -c rollup.lib.js",
+    "min": "uglifyjs -c -m dist/app.js > dist/app.min.js"
+  },
+  "devDependencies": {
+    "rollup": "^0.43.0",
+    "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-svelte": "^2.0.2",
+    "snazzy": "^7.0.0",
+    "standard": "^10.0.2",
+    "uglifyjs": "^2.4.11"
+  },
+  "dependencies": {}
+}
