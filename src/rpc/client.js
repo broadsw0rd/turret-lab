@@ -42,18 +42,20 @@ class RpcClient {
   }
 
   on (eventName, handler) {
-    ;(this.events[eventName] = this.events[eventName] || []).push(handler)
+    var handlers = this.events[eventName] || []
+    ;(this.events[eventName] = handlers).push(handler)
   }
 
   off (eventName, handler) {
-    var idx = (this.events[eventName] || []).indexOf(handler)
+    var handlers = this.events[eventName] || []
+    var idx = handlers.indexOf(handler)
     if (idx !== -1) {
       this.events[eventName].splice(idx, 1)
     }
   }
 
   trigger (eventName, data) {
-    var handlers = this.events[eventName]
+    var handlers = this.events[eventName] || []
     for (var i = 0; i < handlers.length; i++) {
       handlers[i](data)
     }
