@@ -18,9 +18,9 @@ class RpcClient {
   }
 
   handler (e) {
-    var { method, eventName, data, uuid } = e.data;
+    var { method, eventName, data, uid } = e.data;
     if (method) {
-      this.resolve(uuid, data);
+      this.resolve(uid, data);
     }
     if (eventName) {
       this.trigger(eventName, data);
@@ -28,22 +28,22 @@ class RpcClient {
   }
 
   call (method, data, { timeout = 2000 } = {}) {
-    var uuid = this.getUuid();
-    this.worker.postMessage({ method, uuid, data });
+    var uid = this.guid();
+    this.worker.postMessage({ method, uid, data });
     return new Promise((resolve, reject) => {
-      this.timeouts[uuid] = setTimeout(() => reject(new Error(`Timeout exceeded for '${method}' call`)), timeout);
-      this.calls[uuid] = resolve;
+      this.timeouts[uid] = setTimeout(() => reject(new Error(`Timeout exceeded for '${method}' call`)), timeout);
+      this.calls[uid] = resolve;
     })
   }
 
-  getUuid () {
+  guid () {
     return Math.floor((1 + Math.random()) * 1e6).toString(16)
   }
 
-  resolve (uuid, data) {
-    if (this.calls[uuid]) {
-      clearTimeout(this.timeouts[uuid]);
-      this.calls[uuid](data);
+  resolve (uid, data) {
+    if (this.calls[uid]) {
+      clearTimeout(this.timeouts[uid]);
+      this.calls[uid](data);
     }
   }
 

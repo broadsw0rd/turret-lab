@@ -14,11 +14,11 @@ class RpcServer {
   }
 
   handler (e) {
-    var { method, uuid, data } = e.data;
+    var { method, uid, data } = e.data;
     if (this.handlers[method]) {
       self.postMessage({
         method,
-        uuid,
+        uid,
         data: this.handlers[method](data)
       });
     }
