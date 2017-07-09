@@ -25,7 +25,7 @@ class RpcClient {
     var uid = this.guid()
     this.worker.postMessage({ method, uid, data })
     return new Promise((resolve, reject) => {
-      this.timeouts[uid] = setTimeout(() => reject(new Error(`Timeout exceeded for '${method}' call`)), timeout)
+      this.timeouts[uid] = setTimeout(() => reject(new Error(`RPC timeout exceeded for '${method}' call`)), timeout)
       this.calls[uid] = resolve
     })
   }
@@ -38,6 +38,8 @@ class RpcClient {
     if (this.calls[uid]) {
       clearTimeout(this.timeouts[uid])
       this.calls[uid](data)
+      delete this.timeouts[uid]
+      delete this.calls[uid]
     }
   }
 

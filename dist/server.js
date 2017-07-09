@@ -16,12 +16,12 @@ class RpcServer {
   handler (e) {
     var { method, uid, data } = e.data;
     if (this.handlers[method]) {
-      self.postMessage({
-        method,
-        uid,
-        data: this.handlers[method](data)
-      });
+      Promise.all([method, uid, this.handlers[method](data)]).then(this.reply);
     }
+  }
+
+  reply ([method, uid, data]) {
+    self.postMessage({ method, uid, data });
   }
 
   emit (eventName, data) {
@@ -34,42 +34,58 @@ class RpcServer {
 
 /* eslint-env serviceworker */
 
+function delay (time) {
+  return new Promise((resolve) => setTimeout(resolve, time))
+}
+
 self.rpcServer = new RpcServer({
   add ({ x, y, time }) {
     console.log(`Request add ${x} + ${y}: ${Date.now() - time}`);
-    return {
-      result: x + y,
-      time: Date.now()
-    }
+    return delay(Math.floor(Math.random() * 4000))
+      .then(() => {
+        return {
+          result: x + y,
+          time: Date.now()
+        }
+      })
   },
 
   sub ({ x, y, time }) {
     console.log(`Request sub ${x} - ${y}: ${Date.now() - time}`);
-    return {
-      result: x - y,
-      time: Date.now()
-    }
+    return delay(Math.floor(Math.random() * 4000))
+      .then(() => {
+        return {
+          result: x - y,
+          time: Date.now()
+        }
+      })
   },
 
   mul ({ x, y, time }) {
     console.log(`Request mull ${x} * ${y}: ${Date.now() - time}`);
-    return {
-      result: x * y,
-      time: Date.now()
-    }
+    return delay(Math.floor(Math.random() * 4000))
+      .then(() => {
+        return {
+          result: x * y,
+          time: Date.now()
+        }
+      })
   },
 
   div ({ x, y, time }) {
     console.log(`Request div ${x} / ${y}: ${Date.now() - time}`);
-    return {
-      result: x / y,
-      time: Date.now()
-    }
+    return delay(Math.floor(Math.random() * 4000))
+      .then(() => {
+        return {
+          result: x / y,
+          time: Date.now()
+        }
+      })
   }
 });
 
 setInterval(() => {
   self.rpcServer.emit('event', Math.random());
-}, 2000);
+}, 4000);
 
 }());

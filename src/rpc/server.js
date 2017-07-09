@@ -13,12 +13,12 @@ class RpcServer {
   handler (e) {
     var { method, uid, data } = e.data
     if (this.handlers[method]) {
-      self.postMessage({
-        method,
-        uid,
-        data: this.handlers[method](data)
-      })
+      Promise.all([method, uid, this.handlers[method](data)]).then(this.reply)
     }
+  }
+
+  reply ([method, uid, data]) {
+    self.postMessage({ method, uid, data })
   }
 
   emit (eventName, data) {
