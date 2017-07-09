@@ -34,58 +34,27 @@ class RpcServer {
 
 /* eslint-env serviceworker */
 
-function delay (time) {
-  return new Promise((resolve) => setTimeout(resolve, time))
-}
-
 self.rpcServer = new RpcServer({
-  add ({ x, y, time }) {
-    console.log(`Request add ${x} + ${y}: ${Date.now() - time}`);
-    return delay(Math.floor(Math.random() * 4000))
-      .then(() => {
-        return {
-          result: x + y,
-          time: Date.now()
-        }
-      })
+  fib (n) {
+    var a = 1;
+    var b = 0;
+
+    for (var i = n; i--;) {
+      b = [a, a += b][0];
+    }
+
+    return b
   },
 
-  sub ({ x, y, time }) {
-    console.log(`Request sub ${x} - ${y}: ${Date.now() - time}`);
-    return delay(Math.floor(Math.random() * 4000))
-      .then(() => {
-        return {
-          result: x - y,
-          time: Date.now()
-        }
-      })
-  },
+  fac (n) {
+    var f = 1;
 
-  mul ({ x, y, time }) {
-    console.log(`Request mull ${x} * ${y}: ${Date.now() - time}`);
-    return delay(Math.floor(Math.random() * 4000))
-      .then(() => {
-        return {
-          result: x * y,
-          time: Date.now()
-        }
-      })
-  },
+    for (var i = 2; i <= n; i++) {
+      f *= i;
+    }
 
-  div ({ x, y, time }) {
-    console.log(`Request div ${x} / ${y}: ${Date.now() - time}`);
-    return delay(Math.floor(Math.random() * 4000))
-      .then(() => {
-        return {
-          result: x / y,
-          time: Date.now()
-        }
-      })
+    return f
   }
 });
-
-setInterval(() => {
-  self.rpcServer.emit('event', Math.random());
-}, 4000);
 
 }());

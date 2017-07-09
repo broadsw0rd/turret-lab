@@ -73,57 +73,29 @@ var worker = new window.Worker('dist/server.js');
 
 var rpcClient = window.rpcClient = new RpcClient({ worker });
 
-rpcClient.on('event', (data) => {
-  console.log('event', data);
-});
+function fib () {
+  var n = Math.floor(Math.random() * 1000);
 
-function add () {
-  var x = Math.floor(Math.random() * 100);
-  var y = Math.floor(Math.random() * 100);
-
-  rpcClient.call('add', { x, y, time: Date.now() })
-    .then(({ result, time }) => {
-      console.log(`Response add ${x} + ${y} = ${result}: ${Date.now() - time}`);
+  rpcClient.call('fib', n)
+    .then((result) => {
+      console.log(`Response fib(${n}) = ${result}`);
     });
 }
 
-function sub () {
-  var x = Math.floor(Math.random() * 100);
-  var y = Math.floor(Math.random() * 100);
+function fac () {
+  var n = Math.floor(Math.random() * 1000);
 
-  rpcClient.call('sub', { x, y, time: Date.now() })
-    .then(({ result, time }) => {
-      console.log(`Response sub ${x} - ${y} = ${result}: ${Date.now() - time}`);
-    });
-}
-
-function mul () {
-  var x = Math.floor(Math.random() * 100);
-  var y = Math.floor(Math.random() * 100);
-
-  rpcClient.call('mul', { x, y, time: Date.now() })
-    .then(({ result, time }) => {
-      console.log(`Response mul ${x} * ${y} = ${result}: ${Date.now() - time}`);
-    });
-}
-
-function div () {
-  var x = Math.floor(Math.random() * 100);
-  var y = Math.floor(Math.random() * 100);
-
-  rpcClient.call('div', { x, y, time: Date.now() })
-    .then(({ result, time }) => {
-      console.log(`Response div ${x} / ${y} = ${result}: ${Date.now() - time}`);
+  rpcClient.call('fac', n)
+    .then((result) => {
+      console.log(`Response fac(${n}) = ${result}`);
     });
 }
 
 function call () {
-  var method = Math.floor(Math.random() * 4);
+  var method = Math.floor(Math.random() * 2);
   switch (method) {
-    case 0: add(); return
-    case 1: sub(); return
-    case 2: mul(); return
-    case 3: div();
+    case 0: fib(); return
+    case 1: fac();
   }
 }
 
