@@ -4,7 +4,7 @@ import {
 
 class SkillFactory {
   static create () {
-    return new AccuracySkill(.5)
+    return new AccuracySkill(0.5)
   }
 }
 
