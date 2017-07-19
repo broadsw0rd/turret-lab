@@ -14,7 +14,7 @@ export function pick (array = []) {
 
 export function spread (value, spread) {
   spread = spread / 2
-  return frand({ min: value - spread, max: value + spread})
+  return frand({ min: value - spread, max: value + spread })
 }
 
 export function chance (luck) {
