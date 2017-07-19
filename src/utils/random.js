@@ -1,16 +1,22 @@
-export function rand ({ min = 0, max = 1 }) {
-  return Math.random() * (max - min + 1) + min
+export function frand ({ min = 0, max = 1 } = {}) {
+  min *= 100
+  max *= 100
+  return Math.floor(Math.random() * (max - min) + min) / 100
+}
+
+export function irand ({ min = 0, max = 1 } = {}) {
+  return Math.floor(frand({ min, max }))
 }
 
 export function pick (array = []) {
-  return array[Math.floor(this.rand({ max: array.length - 1 }))]
+  return array[irand({ max: array.length })]
 }
 
 export function spread (value, spread) {
   spread = spread / 2
-  return rand({ min: value - spread, max: value + spread})
+  return frand({ min: value - spread, max: value + spread})
 }
 
 export function chance (luck) {
-  return Math.random() * luck < luck
+  return frand() < luck
 }
