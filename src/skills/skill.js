@@ -1,4 +1,13 @@
+import Ability from '../abilities/ability.js'
+
 class Skill {
+  static parse ({ name, abilities }) {
+    return new Skill({
+      name,
+      abilities: abilities.map(Ability.parse)
+    })
+  }
+
   constructor ({ name, abilities }) {
     this.name = name
     this.abilities = abilities
@@ -9,7 +18,10 @@ class Skill {
   }
 
   toJSON () {
-    return this.abilities.map(ability => ability.toJSON())
+    return {
+      name: this.name,
+      abilities: this.abilities.map(ability => ability.toJSON())
+    }
   }
 }
 
