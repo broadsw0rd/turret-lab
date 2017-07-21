@@ -1,6 +1,6 @@
-import Skill from '../skill.js'
+import Ability from './ability.js'
 
-class FireRateSkill extends Skill {
+class FireRate extends Ability {
   constructor (value) {
     super({
       name: 'Fire Rate',
@@ -12,4 +12,4 @@ class FireRateSkill extends Skill {
   apply (game) {}
 }
 
-export default FireRateSkill
+export default FireRate

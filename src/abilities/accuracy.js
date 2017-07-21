@@ -1,6 +1,7 @@
-import Skill from '../skill.js'
+import Ability from './ability.js'
+import { spread } from '../../utils/random.js'
 
-class AccuracySkill extends Skill {
+class Accuracy extends Skill {
   constructor (value) {
     super({
       name: 'Accuracy',
@@ -12,4 +13,4 @@ class AccuracySkill extends Skill {
   apply (game) {}
 }
 
-export default AccuracySkill
+export default Accuracy

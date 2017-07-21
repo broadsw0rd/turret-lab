@@ -1,6 +1,6 @@
-import Skill from '../skill.js'
+import Ability from './ability.js'
 
-class PiercingSkill extends Skill {
+class Piercing extends Ability {
   constructor (value) {
     super({
       name: 'Piercing',
@@ -12,4 +12,4 @@ class PiercingSkill extends Skill {
   apply (game) {}
 }
 
-export default PiercingSkill
+export default Piercing
