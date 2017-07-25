@@ -1,27 +1,27 @@
-import AccuracySkill from './list/accuracy.js'
-import CriticalChanceSkill from './list/critical-chance.js'
-import CriticalDamageSkill from './list/critical-damage.js'
-import DamageSkill from './list/damage.js'
-import ExpBoostSkill from './list/exp-boost.js'
-import FireRateSkill from './list/fire-rate.js'
-import PiercingSkill from './list/piercing.js'
-import SlowSkill from './list/slow.js'
-import TurnSkill from './list/turn.js'
-import VelocitySkill from './list/velocity.js'
+import Accuracy from '../abilities/accuracy.js'
+import CriticalChance from '../abilities/critical-chance.js'
+import CriticalDamage from '../abilities/critical-damage.js'
+import Damage from '../abilities/damage.js'
+import ExpBoost from '../abilities/exp-boost.js'
+import FireRate from '../abilities/fire-rate.js'
+import Piercing from '../abilities/piercing.js'
+import Slow from '../abilities/slow.js'
+import Turn from '../abilities/turn.js'
+import Velocity from '../abilities/velocity.js'
 
 import { irand } from '../utils/random.js'
 
 var map = {
-  'accuracy': AccuracySkill,
-  'critical-chance': CriticalChanceSkill,
-  'critical-damage': CriticalDamageSkill,
-  'damage': DamageSkill,
-  'exp-boost': ExpBoostSkill,
-  'fire-rate': FireRateSkill,
-  'piercing': PiercingSkill,
-  'slow': SlowSkill,
-  'turn': TurnSkill,
-  'velocity': VelocitySkill
+  'accuracy': Accuracy,
+  'critical-chance': CriticalChance,
+  'critical-damage': CriticalDamage,
+  'damage': Damage,
+  'exp-boost': ExpBoost,
+  'fire-rate': FireRate,
+  'piercing': Piercing,
+  'slow': Slow,
+  'turn': Turn,
+  'velocity': Velocity
 }
 
 var keys = Object.keys(map)
@@ -35,13 +35,7 @@ var skills = [
 
 class SkillFactory {
   static create (level) {
-    var idx = irand({ max: skills.length })
-    var skill = skills[idx]
-    skills.splice(idx, 1)
 
-    var Skill = map[skill]
-
-    return Skill.create(level)
   }
 }
 
