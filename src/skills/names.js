@@ -1,15 +1,14 @@
 var names = [
   'Aftershock',
-  'Armageddon',
   'Assassinate',
   'Blitzkrieg',
+  'Carnage',
   'Cataclizm',
   'Chaos',
   'Cyclone',
   'Deathroar',
   'Demolition',
   'Doom',
-  'Dreadnought',
   'Eclipse',
   'Epicenter',
   'Euphoria',
@@ -17,6 +16,7 @@ var names = [
   'Exorcism',
   'Fireblast',
   'Fury',
+  'Gambit',
   'Headshot',
   'Hurricane',
   'Impact',
@@ -33,6 +33,7 @@ var names = [
   'Ravage',
   'Rupture',
   'Sabotage',
+  'Shellshock',
   'Starstorm',
   'Supernova',
   'Thunder',
@@ -43,6 +44,7 @@ var names = [
   'Violence',
   'Void',
   'Warpath',
+  'Wildfire',
   'Wrath'
 ]
 
