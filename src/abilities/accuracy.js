@@ -1,6 +1,6 @@
 import Ability from './ability.js'
 
-class Accuracy extends Skill {
+class Accuracy extends Ability {
   constructor (value) {
     super({
       name: 'Accuracy',
