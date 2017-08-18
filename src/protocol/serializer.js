@@ -7,24 +7,24 @@ class Serializer {
   }
 
   serialize (list) {
-    var buffer = new ArrayBuffer(this.type.SIZE * list.length)
+    var buffer = new ArrayBuffer(this.type.size() * list.length)
     var view = new DataView(buffer)
     var offset = 0
     for (var i = 0; i < list.length; i++) {
       this.type.serialize(view, offset, list[i])
-      offset += this.type.SIZE
+      offset += this.type.size()
     }
     return buffer
   }
 
   deserialize (buffer) {
-    var length = buffer.byteLength / this.type.SIZE
+    var length = buffer.byteLength / this.type.size()
     var view = new DataView(buffer)
     var offset = 0
     var result = Array(length)
     for (var i = 0; i < length; i++) {
       result[i] = this.factory(this.type.deserialize(view, offset))
-      offset += this.type.SIZE
+      offset += this.type.size()
     }
     return result
   }

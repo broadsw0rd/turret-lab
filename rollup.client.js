@@ -8,8 +8,8 @@ export default {
   dest: 'dist/client.js',
   format: 'umd',
   plugins: [
-    svelte(),
     nodeResolve(),
-    commonjs()
+    commonjs(),
+    svelte()
   ]
 }

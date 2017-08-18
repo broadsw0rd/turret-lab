@@ -1,8 +1,8 @@
 import Primitive from './primitive.js'
 
 class Char extends Primitive {
-  get SIZE () {
-    return this.size
+  size () {
+    return this._size
   }
 
   serialize (view, offset, value) {

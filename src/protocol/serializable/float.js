@@ -1,4 +1,4 @@
-import Pitmitive from './primitive.js'
+import Primitive from './primitive.js'
 
 class Float extends Primitive {
   serialize (view, offset, value) {
@@ -10,10 +10,10 @@ class Float extends Primitive {
 
   deserialize (view, offset) {
     switch (this.size) {
-      case 32: return this.view.getFloat32(offset)
-      case 64: return this.view.getFloat64(offset)
+      case 32: return view.getFloat32(offset)
+      case 64: return view.getFloat64(offset)
     }
   }
 }
 
-export class Float
+export default Float

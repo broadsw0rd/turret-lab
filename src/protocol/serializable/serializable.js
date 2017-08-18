@@ -1,6 +1,6 @@
 class Serializable {
-  get SIZE () {
-    throw new Error('Serializable#SIZE should be implemented')
+  size () {
+    throw new Error('Serializable#size() should be implemented')
   }
 
   serialize (view, offset, value) {

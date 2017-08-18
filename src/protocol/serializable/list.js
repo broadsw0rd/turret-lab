@@ -5,17 +5,17 @@ class List extends Serializable {
     super()
     this.type = type
     this.length = length
-    this._size = length * type.SIZE
+    this._size = length * type.size()
   }
 
-  get SIZE () {
+  size () {
     return this._size
   }
 
   serialize (view, offset, value) {
     for (var i = 0; i < this.length; i++) {
       this.type.serialize(view, offset, value[i])
-      offset += this.type.SIZE
+      offset += this.type.size()
     }
   }
 
@@ -23,7 +23,7 @@ class List extends Serializable {
     var result = Array(this.length)
     for (var i = 0; i < this.length; i++) {
       result[i] = this.type.deserialize(view, offset)
-      offset += this.type.SIZE
+      offset += this.type.size()
     }
     return result
   }

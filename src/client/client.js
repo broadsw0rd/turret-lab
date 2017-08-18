@@ -1,35 +1,42 @@
+import Vector from 'vectory'
+
 import RpcClient from '../rpc/client.js'
+import { vectorSerializer } from '../serializers/index.js'
 
 var worker = new window.Worker('dist/server.js')
 
 var rpcClient = window.rpcClient = new RpcClient({ worker })
 
-function fib () {
-  var n = Math.floor(Math.random() * 1000)
-
-  rpcClient.call('fib', n)
-    .then((result) => {
-      console.log(`Response fib(${n}) = ${result}`)
-    })
+function end (result) {
+  console.profileEnd()
+  console.timeEnd()
+  console.log(result)
 }
 
-function fac () {
-  var n = Math.floor(Math.random() * 1000)
-
-  rpcClient.call('fac', n)
-    .then((result) => {
-      console.log(`Response fac(${n}) = ${result}`)
-    })
+function deserialize ({ vectors }) {
+  return vectorSerializer.deserialize(vectors)
 }
 
-function call () {
-  var method = Math.floor(Math.random() * 2)
-  switch (method) {
-    case 0: fib(); return
-    case 1: fac()
+function parse ({ vectors }) {
+  var result = Array(vectors.length)
+  for (var i = 0; i < vectors.length; i++) {
+    result[i] = Vector.from(vectors[i])
   }
+  return result
 }
 
-setInterval(call, 1000)
-setInterval(call, 2000)
-setInterval(call, 3000)
+window.serialized = function serialized () {
+  console.time()
+  console.profile()
+  rpcClient.call('serialized')
+    .then(deserialize)
+    .then(end)
+}
+
+window.copied = function copied () {
+  console.time()
+  console.profile()
+  rpcClient.call('copied')
+    .then(parse)
+    .then(end)
+}

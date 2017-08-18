@@ -1,3 +1,5 @@
+import { peekTransferables } from './transferables.js'
+
 class RpcClient {
   constructor ({ worker }) {
     this.worker = worker
@@ -23,7 +25,8 @@ class RpcClient {
 
   call (method, data, { timeout = 2000 } = {}) {
     var uid = this.guid()
-    this.worker.postMessage({ method, uid, data })
+    var transferables = peekTransferables(data)
+    this.worker.postMessage({ method, uid, data }, transferables)
     return new Promise((resolve, reject) => {
       this.timeouts[uid] = setTimeout(() => reject(new Error(`RPC timeout exceeded for '${method}' call`)), timeout)
       this.calls[uid] = resolve

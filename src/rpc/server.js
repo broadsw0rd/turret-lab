@@ -1,4 +1,5 @@
 /* eslint-env serviceworker */
+import { peekTransferables } from './transferables.js'
 
 class RpcServer {
   constructor (handlers) {
@@ -18,7 +19,8 @@ class RpcServer {
   }
 
   reply ([method, uid, data]) {
-    self.postMessage({ method, uid, data })
+    var transferables = peekTransferables(data)
+    self.postMessage({ method, uid, data }, transferables)
   }
 
   emit (eventName, data) {

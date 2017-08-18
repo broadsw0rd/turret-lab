@@ -37,5 +37,7 @@
     "standard": "^10.0.2",
     "uglifyjs": "^2.4.11"
   },
-  "dependencies": {}
+  "dependencies": {
+    "vectory": "^1.1.0"
+  }
 }

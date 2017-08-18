@@ -5,17 +5,17 @@ class Struct extends Serializable {
     super()
     this.schema = schema
     this.keys = Object.keys(schema)
-    this._size = this.size()
-  }
-
-  get SIZE () {
-    return this._size
+    this._size = this.cacheSize()
   }
 
   size () {
+    return this._size
+  }
+
+  cacheSize () {
     var size = 0
     for (var i = 0; i < this.keys.length; i++) {
-      size += this.schema[this.keys[i]].SIZE
+      size += this.schema[this.keys[i]].size()
     }
     return size
   }
@@ -25,7 +25,7 @@ class Struct extends Serializable {
       var key = this.keys[i]
       var type = this.schema[key]
       type.serialize(view, offset, value[key])
-      offset += type.SIZE
+      offset += type.size()
     }
   }
 
@@ -35,7 +35,7 @@ class Struct extends Serializable {
       var key = this.keys[i]
       var type = this.schema[key]
       result[key] = type.deserialize(view, offset)
-      offset += type.SIZE
+      offset += type.size()
     }
     return result
   }
