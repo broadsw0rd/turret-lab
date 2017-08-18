@@ -10,9 +10,10 @@ class Serializer {
     var buffer = new ArrayBuffer(this.type.size() * list.length)
     var view = new DataView(buffer)
     var offset = 0
+    var size = this.type.size()
     for (var i = 0; i < list.length; i++) {
       this.type.serialize(view, offset, list[i])
-      offset += this.type.size()
+      offset += size
     }
     return buffer
   }
@@ -21,10 +22,11 @@ class Serializer {
     var length = buffer.byteLength / this.type.size()
     var view = new DataView(buffer)
     var offset = 0
+    var size = this.type.size()
     var result = Array(length)
     for (var i = 0; i < length; i++) {
       result[i] = this.factory(this.type.deserialize(view, offset))
-      offset += this.type.size()
+      offset += size
     }
     return result
   }

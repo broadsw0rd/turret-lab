@@ -13,17 +13,19 @@ class List extends Serializable {
   }
 
   serialize (view, offset, value) {
+    var size = this.type.size()
     for (var i = 0; i < this.length; i++) {
       this.type.serialize(view, offset, value[i])
-      offset += this.type.size()
+      offset += size
     }
   }
 
   deserialize (view, offset) {
+    var size = this.type.size()
     var result = Array(this.length)
     for (var i = 0; i < this.length; i++) {
       result[i] = this.type.deserialize(view, offset)
-      offset += this.type.size()
+      offset += size
     }
     return result
   }
