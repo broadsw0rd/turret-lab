@@ -21,10 +21,11 @@ class List extends Serializable {
   }
 
   deserialize (view, offset) {
-    var size = this.type.size()
+    var type = this.type
+    var size = type.size()
     var result = Array(this.length)
     for (var i = 0; i < this.length; i++) {
-      result[i] = this.type.deserialize(view, offset)
+      result[i] = type.deserialize(view, offset)
       offset += size
     }
     return result

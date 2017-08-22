@@ -1,31 +1,32 @@
 import Primitive from './primitive.js'
 
 class Char extends Primitive {
-  size () {
-    return this._size
+  constructor (length) {
+    super(length * 16)
+    this.length = length
   }
 
   serialize (view, offset, value) {
-    for (var i = 0; i < this.size; i++) {
+    for (var i = 0; i < this.length; i++) {
       if (i < value.length) {
-        view.setUint8(offset + i, value.charCodeAt(i))
+        view.setUint16(offset += 2, value.charCodeAt(i))
       } else {
-        view.setUint8(offset + i, 0)
+        break
       }
     }
   }
 
   deserialize (view, offset) {
-    var str = ''
-    for (var i = 0; i < this.size; i++) {
-      var value = view.getUint8(offset + i)
+    var chars = []
+    for (var i = 0; i < this.length; i++) {
+      var value = view.getUint16(offset += 2)
       if (value !== 0) {
-        str += String.fromCharCode(value)
+        chars.push(value)
       } else {
         break
       }
     }
-    return str
+    return String.fromCharCode(...chars)
   }
 }
 

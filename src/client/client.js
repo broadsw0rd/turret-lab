@@ -1,7 +1,6 @@
-import Vector from 'vectory'
-
 import RpcClient from '../rpc/client.js'
-import { vectorSerializer } from '../serializers/index.js'
+import TestData from '../serializers/test-data.js'
+import { testDataSerializer } from '../serializers/index.js'
 
 var worker = new window.Worker('dist/server.js')
 
@@ -13,14 +12,14 @@ function end (result) {
   console.log(result)
 }
 
-function deserialize ({ vectors }) {
-  return vectorSerializer.deserialize(vectors)
+function deserialize ({ testData }) {
+  return testDataSerializer.deserialize(testData)
 }
 
-function parse ({ vectors }) {
-  var result = Array(vectors.length)
-  for (var i = 0; i < vectors.length; i++) {
-    result[i] = Vector.from(vectors[i])
+function parse ({ testData }) {
+  var result = Array(testData.length)
+  for (var i = 0; i < testData.length; i++) {
+    result[i] = TestData.create(testData[i])
   }
   return result
 }

@@ -19,13 +19,15 @@ class Serializer {
   }
 
   deserialize (buffer) {
-    var length = buffer.byteLength / this.type.size()
+    var factory = this.factory
+    var type = this.type
+    var size = type.size()
+    var length = buffer.byteLength / size
     var view = new DataView(buffer)
     var offset = 0
-    var size = this.type.size()
     var result = Array(length)
     for (var i = 0; i < length; i++) {
-      result[i] = this.factory(this.type.deserialize(view, offset))
+      result[i] = factory(type.deserialize(view, offset))
       offset += size
     }
     return result

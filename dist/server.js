@@ -46,6 +46,58 @@ class RpcServer {
   }
 }
 
+function irand ({ min = 0, max = 1 } = {}) {
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+function frand ({ min = 0, max = 1 } = {}) {
+  min *= 100;
+  max *= 100;
+  return irand({ min, max }) / 100
+}
+
+
+
+
+
+
+
+function chance (likelihood) {
+  return Math.random() < likelihood
+}
+
+class TestData {
+  static generate (count) {
+    var result = new Array(count);
+    for (var i = 0; i < result.length; i++) {
+      var value = irand({ max: count });
+      result[i] = new TestData({
+        id: i,
+        value: value,
+        description: `Description ${value}`,
+        enabled: chance(0.5),
+        position: [
+          frand(100),
+          frand(100)
+        ]
+      });
+    }
+    return result
+  }
+
+  static create (option) {
+    return new TestData(option)
+  }
+
+  constructor ({ id, value, description, enabled, position }) {
+    this.id = id;
+    this.value = value;
+    this.description = description;
+    this.enabled = enabled;
+    this.position = position;
+  }
+}
+
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 
@@ -421,13 +473,15 @@ class Serializer {
   }
 
   deserialize (buffer) {
-    var length = buffer.byteLength / this.type.size();
+    var factory = this.factory;
+    var type = this.type;
+    var size = type.size();
+    var length = buffer.byteLength / size;
     var view = new DataView(buffer);
     var offset = 0;
-    var size = this.type.size();
     var result = Array(length);
     for (var i = 0; i < length; i++) {
-      result[i] = this.factory(this.type.deserialize(view, offset));
+      result[i] = factory(type.deserialize(view, offset));
       offset += size;
     }
     return result
@@ -445,6 +499,154 @@ class Serializable {
 
   deserialize (view, offset) {
     throw new Error('Serializable#deserialize() should be implemented')
+  }
+}
+
+class Primitive extends Serializable {
+  constructor (size) {
+    super();
+    this._size = size / 8;
+  }
+
+  size () {
+    return this._size
+  }
+}
+
+class Int extends Primitive {
+  serialize (view, offset, value) {
+    switch (this._size) {
+      case 1: view.setInt8(offset, value); break
+      case 2: view.setInt16(offset, value); break
+      case 4: view.setInt32(offset, value); break
+    }
+  }
+
+  deserialize (view, offset, target, key) {
+    switch (this._size) {
+      case 1: return view.getInt8(offset)
+      case 2: return view.getInt16(offset)
+      case 4: return view.getInt32(offset)
+    }
+  }
+}
+
+class Uint extends Primitive {
+  serialize (view, offset, value) {
+    switch (this._size) {
+      case 1: view.setUint8(offset, value); break
+      case 2: view.setUint16(offset, value); break
+      case 4: view.setUint32(offset, value); break
+    }
+  }
+
+  deserialize (view, offset) {
+    switch (this._size) {
+      case 1: return view.getUint8(offset)
+      case 2: return view.getUint16(offset)
+      case 4: return view.getUint32(offset)
+    }
+  }
+}
+
+class Float extends Primitive {
+  serialize (view, offset, value) {
+    switch (this._size) {
+      case 4: view.setFloat32(offset, value); break
+      case 8: view.setFloat64(offset, value); break
+    }
+  }
+
+  deserialize (view, offset) {
+    switch (this._size) {
+      case 4: return view.getFloat32(offset)
+      case 8: return view.getFloat64(offset)
+    }
+  }
+}
+
+class Bool extends Primitive {
+  constructor () {
+    super(8);
+  }
+
+  serialize (view, offset, value) {
+    view.setUint8(offset, Number(value));
+  }
+
+  deserialize (view, offset) {
+    return Boolean(view.getUint8(offset))
+  }
+}
+
+class Char extends Primitive {
+  constructor (length) {
+    super(length * 16);
+    this.length = length;
+  }
+
+  serialize (view, offset, value) {
+    for (var i = 0; i < this.length; i++) {
+      if (i < value.length) {
+        view.setUint16(offset += 2, value.charCodeAt(i));
+      } else {
+        break
+      }
+    }
+  }
+
+  deserialize (view, offset) {
+    var chars = [];
+    for (var i = 0; i < this.length; i++) {
+      var value = view.getUint16(offset += 2);
+      if (value !== 0) {
+        chars.push(value);
+      } else {
+        break
+      }
+    }
+    return String.fromCharCode(...chars)
+  }
+}
+
+class Struct extends Serializable {
+  constructor (schema) {
+    super();
+    this.schema = schema;
+    this.keys = Object.keys(schema);
+    this._size = this.cacheSize();
+  }
+
+  size () {
+    return this._size
+  }
+
+  cacheSize () {
+    var size = 0;
+    for (var i = 0; i < this.keys.length; i++) {
+      size += this.schema[this.keys[i]].size();
+    }
+    return size
+  }
+
+  serialize (view, offset, value) {
+    for (var i = 0; i < this.keys.length; i++) {
+      var key = this.keys[i];
+      var type = this.schema[key];
+      type.serialize(view, offset, value[key]);
+      offset += type.size();
+    }
+  }
+
+  deserialize (view, offset) {
+    var result = {};
+    for (var i = 0; i < this.keys.length; i++) {
+      var key = this.keys[i];
+      var type = this.schema[key];
+      result[key] = type.deserialize(view, offset);
+      offset += type.size();
+    }
+    return result
   }
 }
 
@@ -469,40 +671,14 @@ class List extends Serializable {
   }
 
   deserialize (view, offset) {
-    var size = this.type.size();
+    var type = this.type;
+    var size = type.size();
     var result = Array(this.length);
     for (var i = 0; i < this.length; i++) {
-      result[i] = this.type.deserialize(view, offset);
+      result[i] = type.deserialize(view, offset);
       offset += size;
     }
     return result
-  }
-}
-
-class Primitive extends Serializable {
-  constructor (size) {
-    super();
-    this._size = size;
-  }
-
-  size () {
-    return this._size / 8
-  }
-}
-
-class Float extends Primitive {
-  serialize (view, offset, value) {
-    switch (this.size) {
-      case 32: return view.setFloat32(offset, value)
-      case 64: return view.setFloat64(offset, value)
-    }
-  }
-
-  deserialize (view, offset) {
-    switch (this.size) {
-      case 32: return view.getFloat32(offset)
-      case 64: return view.getFloat64(offset)
-    }
   }
 }
 
@@ -511,35 +687,37 @@ var vectorSerializer = new Serializer({
   type: new List(new Float(32), 2)
 });
 
-function irand ({ min = 0, max = 1 } = {}) {
-  return Math.floor(Math.random() * (max - min + 1) + min)
-}
-
-function frand ({ min = 0, max = 1 } = {}) {
-  min *= 100;
-  max *= 100;
-  return irand({ min, max }) / 100
-}
+var testDataSerializer = new Serializer({
+  factory: TestData.create,
+  type: new Struct({
+    id: new Uint(32),
+    value: new Int(32),
+    description: new Char(32),
+    enabled: new Bool(),
+    position: new List(new Float(32), 2)
+  })
+});
 
 /* eslint-env serviceworker */
 
-var vectors = Array(1e2);
-for (var i = 0; i < vectors.length; i++) {
-  vectors[i] = [frand(), frand()];
-}
+var testData = TestData.generate(10000);
 
 self.rpcServer = new RpcServer({
   serialized () {
-    var result = vectorSerializer.serialize(vectors);
+    var result = testDataSerializer.serialize(testData);
     return {
-      vectors: result
+      testData: result
     }
   },
 
   copied () {
     return {
-      vectors
+      testData
     }
+  },
+
+  emit () {
+    self.rpcServer.emit('testData', testData);
   }
 });
 

@@ -1,16 +1,16 @@
-import Uint from './uint.js'
+import Primitive from './primitive.js'
 
-class Bool extends Uint {
+class Bool extends Primitive {
   constructor () {
     super(8)
   }
 
   serialize (view, offset, value) {
-    return super.serialize(view, offset, Number(value))
+    view.setUint8(offset, Number(value))
   }
 
   deserialize (view, offset) {
-    return Boolean(super.deserialize(view, offset))
+    return Boolean(view.getUint8(offset))
   }
 }
 

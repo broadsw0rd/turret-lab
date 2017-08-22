@@ -2,25 +2,27 @@
 
 import RpcServer from '../rpc/server.js'
 
-import { vectorSerializer } from '../serializers'
-import { frand } from '../utils/random.js'
+import TestData from '../serializers/test-data.js'
 
-var vectors = Array(1e2)
-for (var i = 0; i < vectors.length; i++) {
-  vectors[i] = [frand(), frand()]
-}
+import { testDataSerializer } from '../serializers'
+
+var testData = TestData.generate(10000)
 
 self.rpcServer = new RpcServer({
   serialized () {
-    var result = vectorSerializer.serialize(vectors)
+    var result = testDataSerializer.serialize(testData)
     return {
-      vectors: result
+      testData: result
     }
   },
 
   copied () {
     return {
-      vectors
+      testData
     }
+  },
+
+  emit () {
+    self.rpcServer.emit('testData', testData)
   }
 })
